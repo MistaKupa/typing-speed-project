@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Sora";
+  src: url("./assets/fonts/Sora/Sora-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-display: "Sora", sans-serif;
+
+  /* TEXT */
+  /* Preset 1 bold */
+  --text-preset1-bold: 40px;
+  --text-preset1-bold--line-height: 1.36;
+  --text-preset1-bold--letter-spacing: 0.4px;
+  --text-preset1-bold--font-weight: 700;
+
+  /* Preset 1 bold for mobile */
+  --text-preset1-bold-mobile: 24px;
+  --text-preset1-bold-mobile--line-height: 1.2;
+  --text-preset1-bold-mobile--letter-spacing: 0.32px;
+  --text-preset1-bold-mobile--font-weight: 700;
+
+  /* Preset 1 regular */
+  --text-preset1-regular: 40px;
+  --text-preset1-regular--line-height: 1.36;
+  --text-preset1-regular--letter-spacing: 0.4px;
+  --text-preset1-regular--font-weight: 400;
+
+  /* Preset 1 regular for mobile */
+  --text-preset1-regular-mobile: 32px;
+  --text-preset1-regular-mobile--line-height: 1.36;
+  --text-preset1-regular-mobile--letter-spacing: 0.4px;
+  --text-preset1-regular-mobile--font-weight: 400;
+
+  /* Preset 2 bold */
+  --text-preset2-bold: 24px;
+  --text-preset2-bold--line-height: 1;
+  --text-preset2-bold--letter-spacing: 0px;
+  --text-preset2-bold--font-weight: 700;
+
+  /* Preset 3 regular */
+  --text-preset3-regular: 20px;
+  --text-preset3-regular--line-height: 1.2;
+  --text-preset3-regular--letter-spacing: -0.6px;
+  --text-preset3-regular--font-weight: 400;
+
+  /* Preset 3 regular mobile */
+  --text-preset3-regular-mobile: 16px;
+  --text-preset3-regular-mobile--line-height: 1.2;
+  --text-preset3-regular-mobile--letter-spacing: -0.48px;
+  --text-preset3-regular-mobile--font-weight: 400;
+
+  /* Preset 3 SemiBold */
+  --text-preset3-semibold: 20px;
+  --text-preset3-semibold--line-height: 1.2;
+  --text-preset3-semibold--letter-spacing: -0.3px;
+  --text-preset3-semibold--font-weight: 600;
+
+  /* Preset 4 regular */
+  --text-preset4-regular: 18px;
+  --text-preset4-regular--line-height: 1.2;
+  --text-preset4-regular--letter-spacing: -0.6px;
+  --text-preset4-regular--font-weight: 400;
+
+  /* Preset 5 regular */
+  --text-preset5-regular: 16px;
+  --text-preset5-regular--line-height: 1.2;
+  --text-preset5-regular--letter-spacing: -0.48px;
+  --text-preset5-regular--font-weight: 400;
+
+  /* Preset 6 regular */
+  --text-preset6-regular: 12px;
+  --text-preset6-regular--line-height: 1.2;
+  --text-preset6-regular--letter-spacing: 0px;
+  --text-preset6-regular--font-weight: 400;
+
+  /*SPACING*/
+  --spacing-0: 0px;
+  --spacing-25: 2px;
+  --spacing-50: 4px;
+  --spacing-75: 6px;
+  --spacing-100: 8px;
+  --spacing-125: 10px;
+  --spacing-150: 12px;
+  --spacing-200: 16px;
+  --spacing-250: 20px;
+  --spacing-300: 24px;
+  --spacing-400: 32px;
+  --spacing-500: 40px;
+  --spacing-600: 48px;
+  --spacing-800: 64px;
+  --spacing-1000: 80px;
+  --spacing-1200: 96px;
+  --spacing-1400: 112px;
+  --spacing-1600: 128px;
+  --spacing-1800: 140px;
+
+  /* Mobile size */
+  --spacing-container-width-mobile: 375px;
+  --spacing-container-height-mobile: 812px;
+
+  /* Tablet size */
+  --spacing-container-width-tablet: 768px;
+  --spacing-container-height-tablet: 1024px;
+
+  /* Desktop size */
+  --spacing-container-width-desktop: 1440px;
+  --spacing-container-height-desktop: 1024px;
+
+  /*BORDER RADIUS*/
+  --radius-0: 0px;
+  --radius-4: 4px;
+  --radius-6: 6px;
+  --radius-8: 8px;
+  --radius-10: 10px;
+  --radius-12: 12px;
+  --radius-16: 16px;
+  --radius-20: 20px;
+  --radius-24: 24px;
+  --radius-full: 999px;
+
+  /* COLORS */
+  /* NEUTRAL */
+  --color-neutral-100: #ffffff;
+  --color-neutral-400: #949497;
+  --color-neutral-500: #717178;
+  --color-neutral-800: #262626;
+  --color-neutral-900: #121212;
+
+  /* BLUE */
+  --color-blue-400: #4ca6ff;
+  --color-blue-600: #177dff;
+
+  /* RED */
+  --color-red-500: #d64d5b;
+
+  /* GREEN */
+  --color-green-500: #4dd67b;
+
+  /* YELLOW */
+  --color-yellow-500: #f4dc73;
+}
