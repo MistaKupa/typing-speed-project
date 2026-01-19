@@ -25,4 +25,4 @@ I joined the hackathon in the final week. My focus was on core logic and state m
 
 - Managing timers in React.
 - Handling real-time keyboard input and validation.
-- Using useCallback functions.
+- Using useCallback function
