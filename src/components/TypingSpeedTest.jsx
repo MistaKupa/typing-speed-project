@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import data from "../../data.json";
 import StartGameModal from "./StartGameModal";
 import Results from "./Results";
@@ -27,6 +27,11 @@ export default function TypingSpeedTest() {
 
   const [gameStatus, setGameStatus] = useState("START_GAME");
 
+  const [pb, setPb] = useState(Number(localStorage.getItem("PB")) || 0);
+
+  const statsRef = useRef(stats);
+  const timeLeftRef = useRef(timeLeft);
+
   const totalTyped = stats.correctLetter + stats.incorrectLetter;
   const accuracy =
     totalTyped > 0 ? Math.round((stats.correctLetter / totalTyped) * 100) : 0;
@@ -46,9 +51,16 @@ export default function TypingSpeedTest() {
     setGameStatus("PLAYING");
   };
 
-  const handleFinishGame = () => {
+  const handleFinishGame = useCallback((finalWPM) => {
     setGameStatus("FINISHED");
-  };
+
+    let savedPB = Number(localStorage.getItem("PB")) || 0;
+
+    if (finalWPM > savedPB) {
+      localStorage.setItem("PB", finalWPM.toString());
+      setPb(finalWPM);
+    }
+  }, []);
 
   const handleDifficultyChange = (difficulty) => {
     setSelectedDifficulty(difficulty);
@@ -71,7 +83,7 @@ export default function TypingSpeedTest() {
   const handleKeyDown = useCallback(
     (event) => {
       if (
-        (timeLeft === 0 && selectedMode === "Timed (60s)") ||
+        (timeLeftRef.current === 0 && selectedMode === "Timed (60s)") ||
         gameStatus === "FINISHED"
       ) {
         return;
@@ -87,6 +99,9 @@ export default function TypingSpeedTest() {
       if (passage.length === 0) return;
 
       if (key.length !== 1 && key !== "Backspace") return;
+
+      const currentStats = statsRef.current;
+      const currentTimeLeft = timeLeftRef.current;
 
       if (key === "Backspace") {
         setUserInput((prev) => prev.slice(0, -1));
@@ -111,33 +126,40 @@ export default function TypingSpeedTest() {
       //   }));
       // }
 
+      const isCorrect = key === passage[userInput.length];
+      const newStats = {
+        correctLetter: isCorrect
+          ? currentStats.correctLetter + 1
+          : currentStats.correctLetter,
+        incorrectLetter: !isCorrect
+          ? currentStats.incorrectLetter + 1
+          : currentStats.incorrectLetter,
+      };
+
+      setStats(newStats);
+
       setUserInput((prev) => {
-        if (prev.length >= passage.length - 1) {
-          handleFinishGame();
-          return;
+        const nextInput = prev + key;
+
+        if (nextInput.length >= passage.length) {
+          const total = newStats.correctLetter + newStats.incorrectLetter;
+          const timePassed = (60 - currentTimeLeft) / 60;
+          const finalWPM = Math.floor(Math.round(total / 5) / timePassed);
+          handleFinishGame(finalWPM);
         }
-
-        const currentLetter = passage[prev.length];
-        const isCorrect = key === currentLetter;
-
-        setStats((prevStats) => {
-          if (isCorrect) {
-            return { ...prevStats, correctLetter: prevStats.correctLetter + 1 };
-          }
-
-          if (!isCorrect) {
-            return {
-              ...prevStats,
-              incorrectLetter: prevStats.incorrectLetter + 1,
-            };
-          }
-        });
-
-        return prev + key;
+        return nextInput;
       });
     },
-    [passage, gameStatus, timeLeft, selectedMode]
+    [passage, gameStatus, handleFinishGame, selectedMode, userInput.length],
   );
+
+  useEffect(() => {
+    statsRef.current = stats;
+  }, [stats]);
+
+  useEffect(() => {
+    timeLeftRef.current = timeLeft;
+  }, [timeLeft]);
 
   useEffect(() => {
     if (selectedMode !== "Timed (60s)" || gameStatus !== "PLAYING") return;
@@ -179,7 +201,7 @@ export default function TypingSpeedTest() {
           />
           <div className="">
             <p className="text-neutral-400">
-              Personal best: <span className="text-neutral-100">92 WPM</span>
+              Personal best: <span className="text-neutral-100">{pb} WPM</span>
             </p>
           </div>
         </div>
