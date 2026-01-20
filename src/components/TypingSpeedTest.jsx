@@ -186,8 +186,10 @@ export default function TypingSpeedTest() {
     };
   }, [handleKeyDown]);
 
+  const isNewPB = gameStatus === "FINISHED" && wordsPerMinute >= pb;
+
   return (
-    <main className="mx-auto w-container-width-mobile h-container-height-mobile md:w-container-width-tablet md:h-container-height-tablet xl:w-container-width-desktop xl:h-container-height-desktop bg-neutral-900 flex flex-col gap-800 px-1400 py-400">
+    <main className="relative mx-auto w-container-width-mobile h-container-height-mobile md:w-container-width-tablet md:h-container-height-tablet xl:w-container-width-desktop xl:h-container-height-desktop bg-neutral-900 flex flex-col gap-800 px-1400 py-400">
       {/* HEADER */}
       <div className="flex justify-between items-center">
         <div className="">
@@ -214,6 +216,7 @@ export default function TypingSpeedTest() {
           accuracy={accuracy}
           characters={stats}
           handleStartGame={handleStartGame}
+          isNewPB={isNewPB}
         />
       ) : (
         <>
