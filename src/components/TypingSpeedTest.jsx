@@ -2,14 +2,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import data from "../../data.json";
 import StartGameModal from "./StartGameModal";
 import Results from "./Results";
+import Header from "./Header";
+import MainContent from "./mainContent/MainContent";
+import { cn } from "../utils/cn";
 
 const DEFAULT_DIFFICULTY = "Easy";
 const GAME_STATUSES = ["START_GAME", "PLAYING", "FINISHED"];
 
 export default function TypingSpeedTest() {
-  const difficulties = ["Easy", "Medium", "Hard"];
-  const modes = ["Timed (60s)", "Passage"];
-
   const [selectedDifficulty, setSelectedDifficulty] =
     useState(DEFAULT_DIFFICULTY);
   const [selectedMode, setSelectedMode] = useState("Timed (60s)");
@@ -44,287 +44,170 @@ export default function TypingSpeedTest() {
   const seconds = timeLeft % 60;
   const timer = `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
 
-  const handleStartGame = () => {
-    setStats({ correctLetter: 0, incorrectLetter: 0 });
-    setUserInput([]);
-    setTimeLeft(60);
-    setGameStatus("PLAYING");
-  };
+  // const handleStartGame = () => {
+  //   setStats({ correctLetter: 0, incorrectLetter: 0 });
+  //   setUserInput([]);
+  //   setTimeLeft(60);
+  //   setGameStatus("PLAYING");
+  // };
 
-  const handleFinishGame = useCallback((finalWPM) => {
-    setGameStatus("FINISHED");
+  // const handleFinishGame = useCallback((finalWPM) => {
+  //   setGameStatus("FINISHED");
 
-    let savedPB = Number(localStorage.getItem("PB")) || 0;
+  //   let savedPB = Number(localStorage.getItem("PB")) || 0;
 
-    if (finalWPM > savedPB) {
-      localStorage.setItem("PB", finalWPM.toString());
-      setPb(finalWPM);
-    }
-  }, []);
+  //   if (finalWPM > savedPB) {
+  //     localStorage.setItem("PB", finalWPM.toString());
+  //     setPb(finalWPM);
+  //   }
+  // }, []);
 
-  const handleDifficultyChange = (difficulty) => {
-    setSelectedDifficulty(difficulty);
+  // const handleDifficultyChange = (difficulty) => {
+  //   setSelectedDifficulty(difficulty);
 
-    const currentDifficulty = difficulty.toLowerCase();
+  //   const currentDifficulty = difficulty.toLowerCase();
 
-    const passages = data[currentDifficulty];
+  //   const passages = data[currentDifficulty];
 
-    if (passages?.length > 0) {
-      const randomIndex = Math.floor(Math.random() * passages.length);
+  //   if (passages?.length > 0) {
+  //     const randomIndex = Math.floor(Math.random() * passages.length);
 
-      const passageArray = passages[randomIndex].text.split("");
-      setPassage(passageArray);
-      setUserInput("");
-      setStats({ correctLetter: 0, incorrectLetter: 0 });
-      setTimeLeft(60);
-    }
-  };
+  //     const passageArray = passages[randomIndex].text.split("");
+  //     setPassage(passageArray);
+  //     setUserInput("");
+  //     setStats({ correctLetter: 0, incorrectLetter: 0 });
+  //     setTimeLeft(60);
+  //   }
+  // };
 
-  const handleKeyDown = useCallback(
-    (event) => {
-      if (
-        (timeLeftRef.current === 0 && selectedMode === "Timed (60s)") ||
-        gameStatus === "FINISHED"
-      ) {
-        return;
-      }
+  // const handleKeyDown = useCallback(
+  //   (event) => {
+  //     if (
+  //       (timeLeftRef.current === 0 && selectedMode === "Timed (60s)") ||
+  //       gameStatus === "FINISHED"
+  //     ) {
+  //       return;
+  //     }
 
-      event.preventDefault();
-      const { key } = event;
+  //     event.preventDefault();
+  //     const { key } = event;
 
-      if (gameStatus !== "PLAYING") {
-        handleStartGame();
-      }
+  //     if (gameStatus !== "PLAYING") {
+  //       handleStartGame();
+  //     }
 
-      if (passage.length === 0) return;
+  //     if (passage.length === 0) return;
 
-      if (key.length !== 1 && key !== "Backspace") return;
+  //     if (key.length !== 1 && key !== "Backspace") return;
 
-      const currentStats = statsRef.current;
-      const currentTimeLeft = timeLeftRef.current;
+  //     const currentStats = statsRef.current;
+  //     const currentTimeLeft = timeLeftRef.current;
 
-      if (key === "Backspace") {
-        setUserInput((prev) => prev.slice(0, -1));
-        return;
-      }
+  //     if (key === "Backspace") {
+  //       setUserInput((prev) => prev.slice(0, -1));
+  //       return;
+  //     }
 
-      // if (userInput.length >= passage.length) return;
+  //     // if (userInput.length >= passage.length) return;
 
-      // const currentLetter = passage[userInput.length];
-      // const isCorrect = key === currentLetter;
+  //     // const currentLetter = passage[userInput.length];
+  //     // const isCorrect = key === currentLetter;
 
-      // if (isCorrect) {
-      //   setStats((prev) => ({
-      //     ...prev,
-      //     correctLetter: prev.correctLetter + 1,
-      //   }));
-      // }
-      // if (!isCorrect) {
-      //   setStats((prev) => ({
-      //     ...prev,
-      //     incorrectLetter: prev.incorrectLetter + 1,
-      //   }));
-      // }
+  //     // if (isCorrect) {
+  //     //   setStats((prev) => ({
+  //     //     ...prev,
+  //     //     correctLetter: prev.correctLetter + 1,
+  //     //   }));
+  //     // }
+  //     // if (!isCorrect) {
+  //     //   setStats((prev) => ({
+  //     //     ...prev,
+  //     //     incorrectLetter: prev.incorrectLetter + 1,
+  //     //   }));
+  //     // }
 
-      const isCorrect = key === passage[userInput.length];
-      const newStats = {
-        correctLetter: isCorrect
-          ? currentStats.correctLetter + 1
-          : currentStats.correctLetter,
-        incorrectLetter: !isCorrect
-          ? currentStats.incorrectLetter + 1
-          : currentStats.incorrectLetter,
-      };
+  //     const isCorrect = key === passage[userInput.length];
+  //     const newStats = {
+  //       correctLetter: isCorrect
+  //         ? currentStats.correctLetter + 1
+  //         : currentStats.correctLetter,
+  //       incorrectLetter: !isCorrect
+  //         ? currentStats.incorrectLetter + 1
+  //         : currentStats.incorrectLetter,
+  //     };
 
-      setStats(newStats);
+  //     setStats(newStats);
 
-      setUserInput((prev) => {
-        const nextInput = prev + key;
+  //     setUserInput((prev) => {
+  //       const nextInput = prev + key;
 
-        if (nextInput.length >= passage.length) {
-          const total = newStats.correctLetter + newStats.incorrectLetter;
-          const timePassed = (60 - currentTimeLeft) / 60;
-          const finalWPM = Math.floor(Math.round(total / 5) / timePassed);
-          handleFinishGame(finalWPM);
-        }
-        return nextInput;
-      });
-    },
-    [passage, gameStatus, handleFinishGame, selectedMode, userInput.length],
-  );
+  //       if (nextInput.length >= passage.length) {
+  //         const total = newStats.correctLetter + newStats.incorrectLetter;
+  //         const timePassed = (60 - currentTimeLeft) / 60;
+  //         const finalWPM = Math.floor(Math.round(total / 5) / timePassed);
+  //         handleFinishGame(finalWPM);
+  //       }
+  //       return nextInput;
+  //     });
+  //   },
+  //   [passage, gameStatus, handleFinishGame, selectedMode, userInput.length],
+  // );
 
-  useEffect(() => {
-    statsRef.current = stats;
-  }, [stats]);
+  // useEffect(() => {
+  //   statsRef.current = stats;
+  // }, [stats]);
 
-  useEffect(() => {
-    timeLeftRef.current = timeLeft;
-  }, [timeLeft]);
+  // useEffect(() => {
+  //   timeLeftRef.current = timeLeft;
+  // }, [timeLeft]);
 
-  useEffect(() => {
-    if (selectedMode !== "Timed (60s)" || gameStatus !== "PLAYING") return;
+  // useEffect(() => {
+  //   if (selectedMode !== "Timed (60s)" || gameStatus !== "PLAYING") return;
 
-    if (timeLeft === 0) {
-      handleFinishGame();
-      return;
-    }
+  //   if (timeLeft === 0) {
+  //     handleFinishGame();
+  //     return;
+  //   }
 
-    const interval = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
-    }, 1000);
+  //   const interval = setInterval(() => {
+  //     setTimeLeft((prev) => prev - 1);
+  //   }, 1000);
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, [gameStatus, timeLeft, selectedMode]);
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, [gameStatus, timeLeft, selectedMode]);
 
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
+  // useEffect(() => {
+  //   window.addEventListener("keydown", handleKeyDown);
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [handleKeyDown]);
+  //   return () => {
+  //     window.removeEventListener("keydown", handleKeyDown);
+  //   };
+  // }, [handleKeyDown]);
 
   const isNewPB = gameStatus === "FINISHED" && wordsPerMinute >= pb;
 
   return (
-    <main className="relative mx-auto w-container-width-mobile h-container-height-mobile md:w-container-width-tablet md:h-container-height-tablet xl:w-container-width-desktop xl:h-container-height-desktop bg-neutral-900 flex flex-col gap-800 px-1400 py-400">
-      {/* HEADER */}
-      <div className="flex justify-between items-center">
-        <div className="">
-          <img src="/images/logo-large.svg" alt="Typing Speed Test Logo" />
-        </div>
-        <div className="flex text-preset4-regular gap-125">
-          <img
-            className=""
-            src="/images/icon-personal-best.svg"
-            alt="Personal Best Icon"
-          />
-          <div className="">
-            <p className="text-neutral-400">
-              Personal best: <span className="text-neutral-100">{pb} WPM</span>
-            </p>
-          </div>
-        </div>
-      </div>
+    <main
+      className={cn(
+        "relative mx-auto bg-neutral-900 ",
+        "flex flex-col gap-400",
 
-      {/*FINISHED RESULTS*/}
-      {gameStatus === "FINISHED" ? (
-        <Results
-          wordsPerMinute={wordsPerMinute}
-          accuracy={accuracy}
-          characters={stats}
-          handleStartGame={handleStartGame}
-          isNewPB={isNewPB}
-        />
-      ) : (
-        <>
-          {/* MAIN CONTENT */}
-          <div className="w-full flex flex-col gap-400">
-            {/* STATS / SETTINGS CONTAINER */}
-            <div className="flex justify-between border-b border-b-neutral-700 pb-200">
-              {/* STATS ROW */}
-              <div className="flex items-center gap-300">
-                <div className="flex gap-150 border-r border-r-neutral-700 pr-300">
-                  <p className="text-neutral-400 text-preset3-regular">WPM:</p>
-                  <span className="text-neutral-100 text-preset2-bold">
-                    {wordsPerMinute}
-                  </span>
-                </div>
+        "w-container-width-mobile h-container-height-mobile",
+        "px-200 pt-200 pb-400",
 
-                <div className="flex gap-150 border-r border-r-neutral-700 pr-300">
-                  <p className="text-neutral-400 text-preset3-regular">
-                    Accuracy:
-                  </p>
-                  <span className="text-red-500 text-preset2-bold">
-                    {accuracy}%
-                  </span>
-                </div>
+        "md:w-container-width-tablet md:h-container-height-tablet",
+        "md:px-400 md:pt-400 md:pb-500 md:gap-500",
 
-                <div className="flex gap-150">
-                  <p className="text-neutral-400 text-preset3-regular">Time:</p>
-                  <span className="text-yellow-500 text-preset2-bold">
-                    {timer}
-                  </span>
-                </div>
-              </div>
-
-              {/* SETTINGS CONTAINER */}
-              <div className="flex gap-200 text-neutral-100 text-preset5-regular">
-                {/* DIFFICULTY CONTAINER */}
-                <div className="flex items-center gap-75 border-r border-r-neutral-700 pr-200">
-                  <p className="text-neutral-400">Difficulty:</p>
-
-                  {difficulties.map((difficulty) => (
-                    <button
-                      key={difficulty}
-                      className={`${
-                        selectedDifficulty === difficulty
-                          ? "border-blue-400 text-blue-400"
-                          : "border-neutral-500"
-                      } border rounded-8 px-125 py-75 cursor-pointer hover:border-blue-400 hover:text-blue-400 transition-all duration-200`}
-                      onClick={() => handleDifficultyChange(difficulty)}
-                    >
-                      {difficulty}
-                    </button>
-                  ))}
-
-                  {/* <button className="border border-blue-400 rounded-8 text-blue-400 px-125 py-75">
-                Hard
-              </button> */}
-                </div>
-
-                {/* MODE CONTAINER */}
-                <div className="flex items-center gap-75">
-                  <p className="text-neutral-400">Mode:</p>
-                  {modes.map((mode) => (
-                    <button
-                      key={mode}
-                      className={`${
-                        selectedMode === mode
-                          ? "border-blue-400 text-blue-400"
-                          : "border-neutral-500"
-                      } border px-125 py-75 rounded-8 hover:border-blue-400 hover:text-blue-400 transition-all duration-200 cursor-pointer`}
-                      onClick={() => {
-                        setSelectedMode(mode);
-                      }}
-                    >
-                      {mode}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/*TEXT CONTAINER*/}
-            <div className="relative min-h-[38.7rem] text-preset1-regular">
-              {gameStatus === "START_GAME" && (
-                <div className="absolute inset-0 z-10">
-                  <StartGameModal startGame={handleStartGame} />
-                </div>
-              )}
-              <p className={`${gameStatus !== "PLAYING" ? "blur-sm" : ""}`}>
-                {passage.map((letter, i) => {
-                  let colorClass = "text-neutral-400";
-
-                  if (i < userInput.length) {
-                    colorClass =
-                      userInput[i] === letter
-                        ? "text-green-500"
-                        : "text-red-500 underline";
-                  }
-                  return (
-                    <span key={i} className={colorClass}>
-                      {letter}
-                    </span>
-                  );
-                })}
-              </p>
-            </div>
-          </div>
-        </>
+        "xl:w-container-width-desktop xl:h-container-height-desktop",
+        "xl:px-1400 xl:pt-400 xl:gap-800",
       )}
+    >
+      {/* HEADER */}
+      <Header />
+
+      <MainContent />
 
       {/*FOOTER CONTAINER*/}
       {gameStatus === "PLAYING" && (

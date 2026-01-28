@@ -67,7 +67,8 @@ export default function Results({
           </p>
         </div>
 
-        {/*STATS*/}
+        {/* STATS */}
+        {/* WPM */}
         <div className="w-full grid grid-cols-[10rem_10rem_10rem] justify-center gap-250 pt-250 pb-400">
           <div className="flex flex-col items-start gap-150 border border-neutral-700 rounded-8 px-300 py-200">
             <p className="text-preset3-regular text-neutral-400">WPM:</p>
@@ -75,10 +76,14 @@ export default function Results({
               {wordsPerMinute}
             </span>
           </div>
+
+          {/* ACCURACY */}
           <div className="flex flex-col items-start gap-150 border border-neutral-700 rounded-8 px-300 py-200">
             <p className="text-preset3-regular text-neutral-400">Accuracy:</p>
             <span className="text-preset2-bold text-red-500">{accuracy}%</span>
           </div>
+
+          {/* CORRECT / INCORRECT */}
           <div className="flex flex-col items-start gap-150 border border-neutral-700 rounded-8 px-300 py-200">
             <p className="text-preset3-regular text-neutral-400">Characters:</p>
             <span className="text-preset2-bold text-neutral-500">
