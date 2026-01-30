@@ -11,7 +11,6 @@ export function useGameLocig({
 
   const [selectedDifficulty, setSelectedDifficulty] =
     useState(defaultDifficulty);
-
   const [selectedMode, setSelectedMode] = useState(defaultMode);
 
   const [passage, setPassage] = useState(() => {
@@ -23,27 +22,36 @@ export function useGameLocig({
 
   const [timeLeft, setTimeLeft] = useState(DEFAULT_TIME);
 
-  const [userInput, setUserInput] = useState([]);
-  const [stats, setStats] = useState({
-    correctLetter: 0,
-    incorrectLetter: 0,
-    totalTyped: 0,
+  // const [userInput, setUserInput] = useState([]);
+  // const [stats, setStats] = useState({
+  //   correctLetter: 0,
+  //   incorrectLetter: 0,
+  //   totalTyped: 0,
+  // });
+
+  const [gameState, setGameState] = useState({
+    userInput: [],
+    stats: { correctLetter: 0, incorrectLetter: 0, totalTyped: 0 },
   });
 
   ///// ACCURACY CALCULATION /////
   const accuracy =
-    stats.totalTyped > 0
-      ? Math.round((stats.correctLetter / stats.totalTyped) * 100)
+    gameState.stats.totalTyped > 0
+      ? Math.round(
+          (gameState.stats.correctLetter / gameState.stats.totalTyped) * 100,
+        )
       : 0;
 
   ///// WPM CALCULATION /////
-  const words = stats.totalTyped / 5;
+  const words = gameState.stats.totalTyped / 5;
   const timePassed = (DEFAULT_TIME - timeLeft) / 60;
   const WPM = timePassed > 0 ? Math.round(words / timePassed) : 0;
 
   const handleStartGame = useCallback(() => {
-    setUserInput([]);
-    setStats({ correctLetter: 0, incorrectLetter: 0, totalTyped: 0 });
+    setGameState({
+      userInput: [],
+      stats: { correctLetter: 0, incorrectLetter: 0, totalTyped: 0 },
+    });
 
     if (selectedMode === "Timed (60s)") {
       setTimeLeft(60);
@@ -60,7 +68,7 @@ export function useGameLocig({
     if (WPM > currentPB) {
       localStorage.setItem("PB", WPM);
     }
-  });
+  }, [WPM]);
 
   ///// DIFFICULTY CHANGE /////
   const handleChangeDifficulty = useCallback((newDifficulty) => {
@@ -74,8 +82,10 @@ export function useGameLocig({
       const passageArray = passages[randomIndex].text.split("");
 
       setPassage(passageArray);
-      setUserInput([]);
-      setStats({ correctLetter: 0, incorrectLetter: 0, totalTyped: 0 });
+      setGameState({
+        userInput: [],
+        stats: { correctLetter: 0, incorrectLetter: 0, totalTyped: 0 },
+      });
       setTimeLeft(60);
     }
   }, []);
@@ -98,44 +108,46 @@ export function useGameLocig({
 
       if (passage.length === 0) return;
 
+      if (key.length !== 1 && key !== "Backspace") return;
+
       if (gameStatus === "START_GAME") {
         handleStartGame();
         return;
       }
 
-      if (key.length !== 1 && key !== "Backspace") return;
+      setGameState((prev) => {
+        if (key === "Backspace") {
+          return {
+            ...prev,
+            userInput: prev.userInput.slice(0, -1),
+          };
+        }
 
-      if (userInput.length + 1 >= passage.length) {
-        handleFinishGame();
-        return;
-      }
+        const currentIndex = prev.userInput.length;
+        const currentLetter = passage[currentIndex];
+        const isCorrect = key === currentLetter;
 
-      if (key === "Backspace") {
-        setUserInput((prev) => prev.slice(0, -1));
-        return;
-      }
+        const nextInput = [...prev.userInput, key];
 
-      setUserInput((prev) => prev + key);
+        if (nextInput.length >= passage.length) {
+          setTimeout(handleFinishGame, 0);
+        }
 
-      const currentLetter = passage[userInput.length];
-      const isCorrect = key === currentLetter;
-
-      if (!isCorrect) {
-        setStats((prev) => ({
-          ...prev,
-          incorrectLetter: prev.incorrectLetter + 1,
-          totalTyped: prev.totalTyped + 1,
-        }));
-        return;
-      }
-
-      setStats((prev) => ({
-        ...prev,
-        correctLetter: prev.correctLetter + 1,
-        totalTyped: prev.totalTyped + 1,
-      }));
+        return {
+          userInput: nextInput,
+          stats: {
+            correctLetter: isCorrect
+              ? prev.stats.correctLetter + 1
+              : prev.stats.correctLetter,
+            incorrectLetter: !isCorrect
+              ? prev.stats.incorrectLetter + 1
+              : prev.stats.incorrectLetter,
+            totalTyped: prev.stats.totalTyped + 1,
+          },
+        };
+      });
     },
-    [gameStatus, passage, userInput.length, handleStartGame, handleFinishGame],
+    [gameStatus, passage, handleStartGame, handleFinishGame],
   );
 
   ///// TIMER /////
@@ -178,8 +190,8 @@ export function useGameLocig({
       handleFinishGame,
     },
     game: {
-      userInput,
-      stats,
+      userInput: gameState.userInput,
+      stats: gameState.stats,
       WPM,
       accuracy,
     },
