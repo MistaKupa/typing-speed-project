@@ -22,7 +22,7 @@ export default function Difficulties({ current, onSelect }) {
 
         {isOpen && (
           <div className="absolute w-full top-10 left-0 z-50">
-            <RadioButtons />
+            <RadioButtons settings={DIFFICULTIES} onSelect={onSelect} />
           </div>
         )}
       </div>

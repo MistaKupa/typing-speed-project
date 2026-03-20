@@ -21,7 +21,7 @@ export default function Modes({ current, onSelect }) {
 
         {isOpen && (
           <div className="absolute w-full top-10 left-0 z-50">
-            <RadioButtons />
+            <RadioButtons settings={MODES} onSelect={onSelect} />
           </div>
         )}
       </div>

@@ -1,22 +1,23 @@
 import { cn } from "../utils/cn";
 
-const difficulties = ["Easy", "Medium", "Hard"];
-
-export default function RadioButtons() {
+export default function RadioButtons({ settings, onSelect }) {
   return (
     <div className="flex flex-col gap-100 py-125 bg-neutral-800 rounded-8">
-      {difficulties.map((difficulty, i) => (
+      {settings.map((setting, i) => (
         <div
-          key={difficulty}
+          key={setting}
           className="relative flex gap-150 px-150 border-b border-b-neutral-700 pb-100 last:border-0 last:pb-0"
         >
           {/* ID NAME VALUE MUSIA BYŤ V LOWE CASE NEZABUDNI */}
-          <div className="relative w-4 h-4 flex items-center justify-center">
+          <div
+            className="relative w-4 h-4 flex items-center justify-center"
+            onClick={() => onSelect(setting)}
+          >
             <input
               type="radio"
-              id={difficulty}
-              name="difficulty"
-              value={difficulty}
+              id={setting}
+              name="setting"
+              value={setting}
               className="peer
             appearance-none shrink-0
             absolute w-4 h-4 border border-neutral-100 rounded-full
@@ -31,8 +32,8 @@ export default function RadioButtons() {
               )}
             />
           </div>
-          <label htmlFor={difficulty} className="text-preset5-regular">
-            {difficulty}
+          <label htmlFor={setting} className="text-preset5-regular">
+            {setting}
           </label>
         </div>
       ))}
